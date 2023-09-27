@@ -37,10 +37,10 @@ let db = [];
         EMF5: true,
         spiritbox: true,
         writing: true,
-        //DOTS: false,
-        //UV: false,
-        //gorb: false,
-        //freezing: false,
+        DOTS: false,
+        UV: false,
+        gorb: false,
+        freezing: false,
         hoverInfo: "TODO: FILL OUT"
     });
     db.push({
