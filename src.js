@@ -507,19 +507,14 @@ function domFixEvidence(evidence) {
     }
 
     let disabled = true;
-    console.log("CHECKING " + evidence.name)
     if(globalFilter[evidence.name] != undefined) {
         disabled = false;
     }
     else {
         for(var i in db) {
             let ghost = db[i];
-            console.log("ghostie " + i + " (" + ghost.name + "): " + (ghost.disabledState == undefined) + " - " + (ghost[evidence.name] == true));
-            console.log(ghost);
-            console.log(evidence);
     
             if(ghost.disabledState == undefined && ghost[evidence.name] == true) {
-                console.log("not disabling!");
                 disabled = false;
                 break;
             }
@@ -527,7 +522,6 @@ function domFixEvidence(evidence) {
     }
     let disabledState = disabled ? "disabledTristate" : "";
 
-    console.log("getting to stuff??");
     evidence.dom.className = evidence.className + " " + hoverState + " " + disabledState;
 }
 
