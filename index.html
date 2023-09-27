@@ -7,6 +7,12 @@
         <script src="src.js"></script>
         <style type="text/css">
             /*TODO: Make it pretty*/
+            #toggles > div {
+                display: grid;
+                justify-items: left;
+                grid-template-columns: max-content;
+                gap: 0px;
+            }
             .tristateLabel {
                 font-size: 30px;
                 padding: 2px 2px;
@@ -14,7 +20,13 @@
                 display: inline-block;
                 cursor: pointer;
             }
-            .disabledTristate { /*will still be clickable*/
+            .tristateShowEvidenceOnTrue {
+                background-color: greenyellow;
+            }
+            .tristateShowEvidenceOnFalse {
+                background-color: red;
+            }
+            .disabledTristate {
                 background-color: gray;
             }
             

@@ -15,12 +15,12 @@ let evidenceTypes = ["EMF5","spiritbox","writing","DOTS","UV","gorb","freezing"]
 //NOTE: each 'Generation' has to have a single 'top level' element. NOT multiple. Wrap things in divs if you have to.
 //the top level element is what gets disabledTristate and disabledGhost tags
 let checkboxGeneration = `
-<label class="tristateLabel" onmouseover="hoverTriState('[evidenceName]')" onmouseout="unhoverTriState('[evidenceName]')">
+<div class="tristateLabel" onmouseover="hoverTriState('[evidenceName]')" onmouseout="unhoverTriState('[evidenceName]')">
     <input type="checkbox" id="[evidenceName] tristate" onclick="toggleTristate(this, '[evidenceName]')">[evidenceName]
-</label><br>`;
+</div>`;
 
 let ghostGeneration = `
-<div class="[name] ghost" onclick="showGhostInfo('[name]')" onmouseover="showGhostInfo('[name] except dont')" onmouseout="hideGhostInfo('[name] except dont')">
+<div class="[name] ghost" onclick="showGhostInfo('[name]')" onmouseover="showEvidenceInfoFor('[name]')" onmouseout="hideEvidenceInfoFor('[name]')">
     [name]
 </div>`;
 
@@ -317,6 +317,7 @@ let db = [];
 
 
 let globalFilter = {};
+let evidenceDB = {};
 let spookyInfoDOM;
 
 function init() {
@@ -352,7 +353,6 @@ function dbObjectChecks() {
     return anyMatches;
 }
 
-let domElements = {};
 function generateDOM() {
     let evidenceDOM = document.getElementById("toggles").getElementsByClassName("inner")[0];
     let evidenceHTMLStr = "";
@@ -362,6 +362,17 @@ function generateDOM() {
     }
     evidenceDOM.innerHTML = evidenceHTMLStr;
 
+    let node = evidenceDOM.firstElementChild;
+    for(var i in evidenceTypes) {
+        var evidence = evidenceTypes[i];
+        evidenceDB[evidence] = {
+            name: evidence,
+            dom: node,
+            className: node.className
+        };
+        node = node.nextElementSibling;
+    }
+
     //generate ghosties
     let spookiesDOM = document.getElementById("spookies").getElementsByClassName("inner")[0];
     let spookiesHTMLStr = "";
@@ -370,7 +381,7 @@ function generateDOM() {
     }
     spookiesDOM.innerHTML = spookiesHTMLStr;
     
-    let node = spookiesDOM.firstElementChild;
+    node = spookiesDOM.firstElementChild;
     for(var ghost in db) {
         db[ghost]._myNode = node;
         db[ghost]._myNodeClassName = node.className;
@@ -390,11 +401,13 @@ function domFixGhost(ghost) {
     }
 
     let disabledState = "";
+    if(ghost.disabledState != undefined) { delete ghost.disabledState; }
     for(var i in Object.keys(globalFilter)) {
         var str = Object.keys(globalFilter)[i];
         var filter = globalFilter[str];
         if(ghost[str] != undefined && ghost[str] != filter) {
             disabledState = "disabledGhost";
+            ghost.disabledState = true;
         }
     }
 
@@ -428,6 +441,10 @@ function toggleTristate(checkbox, stringName) {
     for(var i in db) {
         let ghost = db[i];
         domFixGhost(ghost);
+    }
+
+    for(var i in evidenceDB) {
+        domFixEvidence(evidenceDB[i]);
     }
 
     //console.log(globalFilter);
@@ -480,23 +497,74 @@ function hideGhostInfo(ghostName) {
     }
 }
 
-function getFilteredDB(filter) {
-    let filteredDB = [];
-
-    entryLoop: for(var entry in db) {
-        for(var v in filter) {
-            if(filter[v] == undefined) continue;
-            if(db[entry][v] != filter[v]) {
-                // console.log("Unmatched filter: " + db[entry].name + "." + v + " - " + db[entry][v] + " != " + filter[v]);
-                continue entryLoop;
-            }
-        }
-
-        filteredDB.push(db[entry]);
-        // console.log("Successfully matched with " + db[entry].name);
+function domFixEvidence(evidence) {
+    let hoverState = "";
+    if(evidence._showEvidence == true) {
+        hoverState = "tristateShowEvidenceOnTrue";
+    }
+    else if(evidence._showEvidence == false) {
+        hoverState = "tristateShowEvidenceOnFalse";
     }
 
-    return filteredDB;
+    let disabled = true;
+    console.log("CHECKING " + evidence.name)
+    if(globalFilter[evidence.name] != undefined) {
+        disabled = false;
+    }
+    else {
+        for(var i in db) {
+            let ghost = db[i];
+            console.log("ghostie " + i + " (" + ghost.name + "): " + (ghost.disabledState == undefined) + " - " + (ghost[evidence.name] == true));
+            console.log(ghost);
+            console.log(evidence);
+    
+            if(ghost.disabledState == undefined && ghost[evidence.name] == true) {
+                console.log("not disabling!");
+                disabled = false;
+                break;
+            }
+        }
+    }
+    let disabledState = disabled ? "disabledTristate" : "";
+
+    console.log("getting to stuff??");
+    evidence.dom.className = evidence.className + " " + hoverState + " " + disabledState;
+}
+
+let curEvidenceGhost = undefined;
+function showEvidenceInfoFor(ghostName) {
+    for(var i in db) {
+        let ghost = db[i];
+        if(ghost.name == ghostName) {
+            curEvidenceGhost = ghostName;
+
+            for(var i2 in evidenceDB) {
+                var evidence = evidenceDB[i2];
+
+                if(evidence.name != undefined) {
+                    evidence._showEvidence = ghost[evidence.name];
+                }
+
+                domFixEvidence(evidence);
+            }
+            return;
+        }
+    }
+}
+
+function hideEvidenceInfoFor(ghostName) {
+    if(curEvidenceGhost != undefined && curEvidenceGhost == ghostName) {
+        curEvidenceGhost = undefined;
+
+        for(var i in evidenceDB) {
+            var evidence = evidenceDB[i];
+
+            if(evidence._showEvidence != undefined) {
+                delete evidence._showEvidence;
+                domFixEvidence(evidence);
+            }
+        }
+    }
 }
 
 const escapeHtml = (unsafe) => {
