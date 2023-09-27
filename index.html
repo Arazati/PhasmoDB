@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>PhasmoDB Notebook</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <script src="src.js"></script>
+        <style type="text/css">
+            /*TODO: Make it pretty*/
+            .tristateLabel {
+                font-size: 30px;
+                padding: 2px 2px;
+                text-align: center;
+                display: inline-block;
+                cursor: pointer;
+            }
+            .disabledTristate { /*will still be clickable*/
+                background-color: gray;
+            }
+            
+            #spookies > div {
+                display: grid;
+                grid-template-columns: repeat(4, 10%);
+                gap: 15px;
+            }
+            .ghost {
+                background-color: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                font-size: 30px;
+                text-align: center;
+                display: inline-block;
+                outline: auto;
+            }
+            .ghostShowEvidenceOnTrue {
+                background-color: greenyellow;
+            }
+            .ghostShowEvidenceOnFalse {
+                background-color: red;
+            }
+            .disabledGhost {
+                background-color: gray;
+            }
+        </style>
+    </head>
+    <body onload="init()">
+            <div id="toggles">
+                <div class="inner">
+                    <!-- inner gets completely replaced, so make any changes outside, or modify he src.js to fit -->
+                    PLACEHOLDER, REPLACED BY JS<br><br>
+
+                    example of generated code; (CHANGING IT HERE DOES NOTHING, JUST TO VISUALIZE THE GENERATED CODE)
+                    <label class="tristateLabel" onmouseover="hoverTriState('EMF5')" onmouseout="unhoverTriState('EMF5')">
+                        <input type="checkbox" id="EMF5 tristate" onclick="toggleTristate(this, 'EMF5')">
+                        EMF5
+                    </label><br>
+                    <label class="tristateLabel" onmouseover="hoverTriState('spiritbox')" onmouseout="unhoverTriState('spiritbox')">
+                        <input type="checkbox" id="spiritbox tristate" onclick="toggleTristate(this, 'spiritbox')">
+                        spiritbox
+                    </label>
+
+                    <br>etc
+                </div>
+            </div>
+            <hr>
+            <div id="spookies">
+                <div class="inner">
+                    PLACEHOLDER, REPLACED BY JS<br><br>
+
+                    example of generated code;<br>
+                    <div class="spirit ghost" onclick="showGhostInfo('spirit')">
+                        spirit
+                    </div>
+                    <div class="wraith ghost" onclick="showGhostInfo('wraith')" >
+                        wraith
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div id="spookyInfo">
+                <div class="inner">
+                    PLACEHOLDER, REPLACED BY JS<br><br>
+                </div>
+            </div>
+    </body>
+</html>
